@@ -1,7 +1,15 @@
 <script lang="ts">
 	import '../app.scss';
 	import '../css/prism.css';
+	
+	// Site configuration
+	const siteUrl = 'https://lulu-ulul.vercel.app';
 </script>
+
+<svelte:head>
+	<!-- RSS Feed -->
+	<link rel="alternate" type="application/rss+xml" title="RSS Feed for LinHeMa de Blog" href="/feed.xml" />
+</svelte:head>
 
 <div class="min-h-screen flex flex-col">
 	<header class="header">
@@ -19,6 +27,11 @@
 					<li><a href="/" class="nav-link">Home</a></li>
 					<li><a href="/tags" class="nav-link">Tags</a></li>
 					<li><a href="/about" class="nav-link">About</a></li>
+					<li>
+						<a href="/feed.xml" class="nav-link" title="RSS Feed">
+							<span class="rss-icon">RSS</span>
+						</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
@@ -42,6 +55,7 @@
 					<a href="https://github.com/linhema" target="_blank" rel="noopener noreferrer" class="nav-link">
 						GitHub
 					</a>
+					<a href="/feed.xml" class="nav-link" title="RSS Feed">RSS</a>
 				</div>
 			</div>
 		</div>
@@ -68,5 +82,14 @@
 	
 	.text-light {
 		color: var(--text-light);
+	}
+	
+	.rss-icon {
+		display: inline-block;
+		padding: 2px 5px;
+		background-color: #f26522;
+		color: white;
+		font-size: 0.75rem;
+		border-radius: 3px;
 	}
 </style>
