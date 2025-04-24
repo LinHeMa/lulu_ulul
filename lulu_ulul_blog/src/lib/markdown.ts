@@ -1,16 +1,74 @@
 import { marked } from 'marked';
 import { format } from 'date-fns';
+import Prism from 'prismjs';
 
-// Configure marked options
+// Import additional languages
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-tsx';
+import 'prismjs/components/prism-css';
+import 'prismjs/components/prism-scss';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-markdown';
+import 'prismjs/components/prism-json';
+import 'prismjs/components/prism-yaml';
+import 'prismjs/components/prism-go';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-csharp';
+import 'prismjs/components/prism-c';
+import 'prismjs/components/prism-cpp';
+import 'prismjs/components/prism-rust';
+import 'prismjs/components/prism-sql';
+import 'prismjs/components/prism-graphql';
+import 'prismjs/components/prism-docker';
+
+// Initialize marked without custom renderer
 marked.setOptions({
-  gfm: true, // GitHub Flavored Markdown
-  breaks: true, // Convert line breaks to <br>
+  breaks: true,
+  gfm: true,
   pedantic: false
 });
 
-// Parse markdown to HTML
+// Create custom highlight function for attaching to marked
+function highlightCode(code: string, lang: string): string {
+  // If language is found in Prism, use it for highlighting
+  if (lang && Prism.languages[lang]) {
+    try {
+      return Prism.highlight(code, Prism.languages[lang], lang);
+    } catch {
+      return JSON.stringify(code);
+    }
+  }
+  // Return regular code for unknown languages
+  return JSON.stringify(code);
+}
+
+// Parse markdown to HTML with syntax highlighting
 export function parseMarkdown(markdown: string): string {
-  return marked.parse(markdown) as string;
+  // First pass: Parse the markdown
+  const html = marked.parse(markdown);
+  
+  if (typeof html !== 'string') {
+    return '';
+  }
+  
+  // Apply Prism classes to code blocks
+  return html
+    .replace(/<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g, 
+      (_match: string, lang: string, code: string) => {
+        const decoded = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+        const highlighted = highlightCode(decoded, lang);
+        return `<pre class="language-${lang}"><code class="language-${lang}">${highlighted}</code></pre>`;
+      }
+    )
+    .replace(/<pre><code>([\s\S]*?)<\/code><\/pre>/g, 
+      (_match: string, code: string) => {
+        const decoded = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+        return `<pre class="language-none"><code class="language-none">${decoded}</code></pre>`;
+      }
+    );
 }
 
 // Format a date string
@@ -19,7 +77,7 @@ export function formatDate(dateString: string): string {
   return format(date, 'MMMM d, yyyy');
 }
 
-// Get excerpt from markdown text (first 100 chars)
+// Get excerpt from markdown text
 export function getExcerpt(markdown: string, maxLength: number = 100): string {
   // Remove markdown syntax
   const text = markdown
