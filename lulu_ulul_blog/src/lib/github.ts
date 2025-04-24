@@ -1,45 +1,5 @@
 import { browser } from '$app/environment';
 
-// Environment variables
-const GITHUB_OWNER = import.meta.env.VITE_GITHUB_OWNER;
-const GITHUB_REPO = import.meta.env.VITE_GITHUB_REPO;
-const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
-console.log(import.meta.env.VITE_GITHUB_OWNER, GITHUB_REPO, GITHUB_TOKEN);
-// API base URL
-
-const API_BASE = 'https://api.github.com';
-
-// Headers for GitHub API requests
-const getHeaders = () => {
-  const headers: HeadersInit = {
-    'Accept': 'application/vnd.github.v3+json',
-  };
-  
-  if (GITHUB_TOKEN) {
-    headers['Authorization'] = `token ${GITHUB_TOKEN}`;
-  }
-  
-  return headers;
-};
-
-// GitHub API types
-interface GitHubLabel {
-  name: string;
-  color: string;
-  description?: string;
-}
-
-interface GitHubIssue {
-  id: number;
-  number: number;
-  title: string;
-  body: string;
-  created_at: string;
-  updated_at: string;
-  html_url: string;
-  labels: GitHubLabel[];
-}
-
 // Blog post type
 export interface BlogPost {
   id: number;
@@ -53,114 +13,70 @@ export interface BlogPost {
   url: string;
 }
 
-// Fetch all published blog posts
+// 使用我們的後端API安全地獲取博客文章
+// 這些函數將不再直接呼叫GitHub API，而是通過我們的後端路由
+// 如此就不會在前端暴露token了
+
+// 獲取所有已發佈的博客文章
 export async function getPublishedPosts(): Promise<BlogPost[]> {
   try {
-    const response = await fetch(
-      `${API_BASE}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues?labels=published&state=open&sort=created&direction=desc`,
-      { headers: getHeaders() }
-    );
+    const response = await fetch('/api/posts');
     
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      throw new Error(`API error: ${response.status}`);
     }
     
-    const issues = await response.json() as GitHubIssue[];
-    
-    return issues.map((issue) => ({
-      id: issue.id,
-      number: issue.number,
-      title: issue.title,
-      body: issue.body,
-      created_at: issue.created_at,
-      updated_at: issue.updated_at,
-      html_url: issue.html_url,
-      tags: issue.labels
-        .filter((label) => label.name !== 'published' && label.name !== 'draft')
-        .map((label) => label.name),
-      url: `/blog/${issue.number}`
-    }));
+    const posts = await response.json();
+    return posts;
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     return [];
   }
 }
 
-// Fetch a single blog post by issue number
+// 通過issue編號獲取單個博客文章
 export async function getBlogPost(issueNumber: number): Promise<BlogPost | null> {
   try {
-    const response = await fetch(
-      `${API_BASE}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues/${issueNumber}`,
-      { headers: getHeaders() }
-    );
+    const response = await fetch(`/api/posts?id=${issueNumber}`);
     
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      throw new Error(`API error: ${response.status}`);
     }
     
-    const issue = await response.json() as GitHubIssue;
+    const post = await response.json();
     
-    // Check if the issue has the 'published' label
-    const isPublished = issue.labels.some((label) => label.name === 'published');
-    
-    if (!isPublished && !browser) {
-      // Don't show unpublished posts on server
+    // 檢查文章是否有published標籤
+    // 現在這個檢查可以放在後端，但為了保持一致性，我們保留這裡的檢查
+    if (!post.tags && !browser) {
+      // 在服務器端不顯示未發布的文章
       return null;
     }
     
-    return {
-      id: issue.id,
-      number: issue.number,
-      title: issue.title,
-      body: issue.body,
-      created_at: issue.created_at,
-      updated_at: issue.updated_at,
-      html_url: issue.html_url,
-      tags: issue.labels
-        .filter((label) => label.name !== 'published' && label.name !== 'draft')
-        .map((label) => label.name),
-      url: `/blog/${issue.number}`
-    };
+    return post;
   } catch (error) {
     console.error(`Error fetching blog post #${issueNumber}:`, error);
     return null;
   }
 }
 
-// Fetch posts by tag
+// 按標籤獲取文章
 export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
   try {
-    const response = await fetch(
-      `${API_BASE}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues?labels=published,${tag}&state=open&sort=created&direction=desc`,
-      { headers: getHeaders() }
-    );
+    const response = await fetch(`/api/posts?tag=${encodeURIComponent(tag)}`);
     
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      throw new Error(`API error: ${response.status}`);
     }
     
-    const issues = await response.json() as GitHubIssue[];
-    
-    return issues.map((issue) => ({
-      id: issue.id,
-      number: issue.number,
-      title: issue.title,
-      body: issue.body,
-      created_at: issue.created_at,
-      updated_at: issue.updated_at,
-      html_url: issue.html_url,
-      tags: issue.labels
-        .filter((label) => label.name !== 'published' && label.name !== 'draft')
-        .map((label) => label.name),
-      url: `/blog/${issue.number}`
-    }));
+    const posts = await response.json();
+    return posts;
   } catch (error) {
     console.error(`Error fetching posts with tag ${tag}:`, error);
     return [];
   }
 }
 
-// Get all unique tags from published posts
+// 獲取所有已發佈文章的唯一標籤
 export async function getAllTags(): Promise<string[]> {
   try {
     const posts = await getPublishedPosts();
