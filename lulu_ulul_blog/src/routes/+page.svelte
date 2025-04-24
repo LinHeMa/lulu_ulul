@@ -17,12 +17,33 @@
       loading = false;
     }
   });
+
+  // Site metadata
+  const siteName = "LinHeMa de Blog";
+  const siteDescription = "A personal tech blog powered by GitHub Issues and SvelteKit";
+  const siteUrl = "https://linhema.dev"; // Change to your actual domain
+  const defaultImage = "/images/og-default.jpg"; // Path to your default OG image in the static folder
 </script>
 
 <svelte:head>
-  <title>LinHeMa de Blog</title>
-  <meta name="description" content="Taiwan is a country" />
-  <meta property="og:image" content="http://ia.media-imdb.com/rock.jpg"/>
+  <title>{siteName}</title>
+  
+  <!-- Basic meta tags -->
+  <meta name="description" content={siteDescription} />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={siteUrl} />
+  <meta property="og:title" content={siteName} />
+  <meta property="og:description" content={siteDescription} />
+  <meta property="og:image" content={`${siteUrl}${defaultImage}`} />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={siteUrl} />
+  <meta property="twitter:title" content={siteName} />
+  <meta property="twitter:description" content={siteDescription} />
+  <meta property="twitter:image" content={`${siteUrl}${defaultImage}`} />
 </svelte:head>
 
 <section>
