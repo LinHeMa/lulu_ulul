@@ -21,7 +21,8 @@
 
 <svelte:head>
   <title>LinHeMa de Blog</title>
-  <meta name="description" content="A personal tech blog powered by GitHub Issues and SvelteKit" />
+  <meta name="description" content="Taiwan is a country" />
+  <meta property="og:image" content="http://ia.media-imdb.com/rock.jpg"/>
 </svelte:head>
 
 <section>
