@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { getAllTags } from '$lib/github';
-  
+  import Tag from '$lib/components/tag/Tag.svelte';
   let tags: string[] = [];
   let loading = true;
   let error: string | null = null;
@@ -43,9 +43,7 @@
   {:else}
     <div class="flex flex-wrap gap-4">
       {#each tags as tag}
-        <a href={`/tags/${tag}`} class="inline-block px-5 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 text-lg">
-          {tag}
-        </a>
+        <Tag tagId={tag} />
       {/each}
     </div>
   {/if}

@@ -6,7 +6,8 @@
 	import { parseMarkdown, formatDate } from '$lib/markdown';
 	import Giscus from '@giscus/svelte';
 	import type { BlogPost } from '$lib/github';
-
+	import './_styles/page.scss';
+	import Tag from '$lib/components/tag/Tag.svelte';
 	let post: BlogPost | null = null;
 	let loading = true;
 	let error: string | null = null;
@@ -33,7 +34,7 @@
 	// Site metadata
 	const siteName = 'LinHeMa de Blog';
 	const siteUrl = 'https://linhema.dev'; // Change to your actual domain
-	const defaultImage = 'static/images/og-default.jpg'; // Path to your default OG image
+	const articleId = $page.params.id;
 </script>
 
 <svelte:head>
@@ -44,7 +45,7 @@
 	<meta property="og:description" content="LinHeMa de Blog" />
 	<meta
 		property="og:image"
-		content="https://lulu-ulul.vercel.app/images/og-default.jpg"
+		content={`https://lulu-ulul.vercel.app/images/og-${articleId}.jpg`}
 	/>
 
 	<!-- Twitter Meta Tags -->
@@ -77,26 +78,21 @@
 			</div>
 		</div>
 	{:else if post}
-		<article class="prose dark:prose-invert lg:prose-lg max-w-none">
+		<article class="article-container">
 			<header class="mb-8">
 				<h1 class="mb-2">{post.title}</h1>
 				<div class="flex items-center text-gray-500 dark:text-gray-400 mb-4">
 					<span>{formatDate(post.created_at)}</span>
 					{#if post.created_at !== post.updated_at}
 						<span class="mx-2">•</span>
-						<span>Updated: {formatDate(post.updated_at)}</span>
+						<span class="article-date">Updated: {formatDate(post.updated_at)}</span>
 					{/if}
 				</div>
 
 				{#if post.tags.length > 0}
 					<div class="flex flex-wrap gap-2 mb-6">
 						{#each post.tags as tag}
-							<a
-								href={`/tags/${tag}`}
-								class="inline-block px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
-							>
-								{tag}
-							</a>
+							<Tag tagId={tag} />
 						{/each}
 					</div>
 				{/if}
