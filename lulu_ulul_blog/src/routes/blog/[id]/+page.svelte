@@ -37,34 +37,26 @@
 </script>
 
 <svelte:head>
-	{#if post}
-		<title>{post.title} | {siteName}</title>
+	<!-- Facebook Meta Tags -->
+	<meta property="og:url" content="https://lulu-ulul.vercel.app/" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="LinHeMa de Blog" />
+	<meta property="og:description" content="LinHeMa de Blog" />
+	<meta
+		property="og:image"
+		content="https://opengraph.b-cdn.net/production/images/086d80af-2dd6-473d-a72b-15e53a6aa585.jpg?token=GrP98DBYZ3d0C7p7emkduCpJhgRuYjLBbvY_SDrMc6c&height=800&width=1200&expires=33281552649"
+	/>
 
-		<!-- Basic meta tags -->
-		<meta name="description" content={post.body.substring(0, 160)} />
-
-		<!-- Open Graph / Facebook -->
-		<meta property="og:type" content="article" />
-		<meta property="og:url" content={`${siteUrl}/blog/${post.number}`} />
-		<meta property="og:title" content={post.title} />
-		<meta property="og:description" content={post.body.substring(0, 160)} />
-		<meta property="og:image" content={`${siteUrl}${defaultImage}`} />
-		<meta property="article:published_time" content={post.created_at} />
-		{#if post.tags.length > 0}
-			{#each post.tags as tag}
-				<meta property="article:tag" content={tag} />
-			{/each}
-		{/if}
-	{:else}
-		<title>Blog Post | {siteName}</title>
-		<meta name="description" content="Loading blog post..." />
-
-		<!-- Default OG meta tags while loading -->
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content="Blog Post | {siteName}" />
-		<meta property="og:description" content="Loading blog post..." />
-		<meta property="og:image" content={`${siteUrl}${defaultImage}`} />
-	{/if}
+	<!-- Twitter Meta Tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="twitter:domain" content="lulu-ulul.vercel.app" />
+	<meta property="twitter:url" content="https://lulu-ulul.vercel.app/" />
+	<meta name="twitter:title" content="LinHeMa de Blog" />
+	<meta name="twitter:description" content="LinHeMa de Blog" />
+	<meta
+		name="twitter:image"
+		content="https://opengraph.b-cdn.net/production/images/086d80af-2dd6-473d-a72b-15e53a6aa585.jpg?token=GrP98DBYZ3d0C7p7emkduCpJhgRuYjLBbvY_SDrMc6c&height=800&width=1200&expires=33281552649"
+	/>
 </svelte:head>
 
 <div>

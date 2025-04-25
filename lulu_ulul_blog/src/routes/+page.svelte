@@ -17,14 +17,32 @@
 			loading = false;
 		}
 	});
-
 </script>
 
 <svelte:head>
 	<!-- HTML Meta Tags -->
 	<title>LinHeMa de Blog</title>
 	<meta name="description" content="LinHeMa de Blog" />
+	<!-- Facebook Meta Tags -->
+	<meta property="og:url" content="https://lulu-ulul.vercel.app/" />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="LinHeMa de Blog" />
+	<meta property="og:description" content="LinHeMa de Blog" />
+	<meta
+		property="og:image"
+		content="https://opengraph.b-cdn.net/production/images/086d80af-2dd6-473d-a72b-15e53a6aa585.jpg?token=GrP98DBYZ3d0C7p7emkduCpJhgRuYjLBbvY_SDrMc6c&height=800&width=1200&expires=33281552649"
+	/>
 
+	<!-- Twitter Meta Tags -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="twitter:domain" content="lulu-ulul.vercel.app" />
+	<meta property="twitter:url" content="https://lulu-ulul.vercel.app/" />
+	<meta name="twitter:title" content="LinHeMa de Blog" />
+	<meta name="twitter:description" content="LinHeMa de Blog" />
+	<meta
+		name="twitter:image"
+		content="https://opengraph.b-cdn.net/production/images/086d80af-2dd6-473d-a72b-15e53a6aa585.jpg?token=GrP98DBYZ3d0C7p7emkduCpJhgRuYjLBbvY_SDrMc6c&height=800&width=1200&expires=33281552649"
+	/>
 </svelte:head>
 
 <section>
