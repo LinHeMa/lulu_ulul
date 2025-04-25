@@ -23,6 +23,7 @@
 	const siteDescription = 'A personal tech blog powered by GitHub Issues and SvelteKit';
 	const siteUrl = 'https://lulu-ulul.vercel.app/'; // Change to your actual domain
 	const defaultImage = '/images/og-default.jpg'; // Path to your default OG image in the static folder
+	console.log(`${siteUrl}${defaultImage.startsWith('/') ? defaultImage.substring(1) : defaultImage}`);
 </script>
 
 <svelte:head>
@@ -35,7 +36,7 @@
 	<meta property="og:type" content="website" />
 	<meta property="og:title" content='A personal tech blog powered by GitHub Issues and SvelteKit' />
 	<meta property="og:description" content={siteDescription} />
-	<meta property="og:image" content={`${siteUrl}${defaultImage.startsWith('/') ? defaultImage.substring(1) : defaultImage}`} />
+	<meta property="og:image" content="https://lulu-ulul.vercel.app/images/og-default.jpg" />
 
 	<!-- Twitter Meta Tags -->
 	<meta name="twitter:card" content="summary_large_image" />
@@ -43,7 +44,7 @@
 	<meta property="twitter:url" content={siteUrl} />
 	<meta name="twitter:title" content="linhemade" />
 	<meta name="twitter:description" content="" />
-	<meta name="twitter:image" content={`${siteUrl}${defaultImage.startsWith('/') ? defaultImage.substring(1) : defaultImage}`} />
+	<meta name="twitter:image" content="https://lulu-ulul.vercel.app/images/og-default.jpg" />
 
 	<!-- Meta Tags Generated via https://www.opengraph.xyz -->
 </svelte:head>
