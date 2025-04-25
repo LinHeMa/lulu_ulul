@@ -16,7 +16,7 @@
 		<div class="container nav">
 			<!-- Site title and logo -->
 			<div>
-				<a href="/" class="site-title">
+				<a href="/" class="site-title site-title-text">
 					LinHeMa de Blog
 				</a>
 			</div>
@@ -67,12 +67,12 @@
 		min-height: 100vh;
 	}
 	
-	.site-title {
+	/* .site-title {
 		font-weight: bold;
 		font-size: 1.25rem;
 		color: var(--text-dark);
 		text-decoration: none;
-	}
+	} */
 	
 	@media (min-width: 768px) {
 		.site-title {
@@ -91,5 +91,30 @@
 		color: white;
 		font-size: 0.75rem;
 		border-radius: 3px;
+	}
+
+	@keyframes typing {
+		from {
+			width: 0;
+		}
+	}
+
+	@keyframes blink {
+		50% {
+			border-color: transparent;
+		}
+	}
+	.site-title-text {
+		display: block;
+		color: #f26522;
+		width: 15rem;
+		animation:
+			typing 2s steps(15),
+			blink 0.5s step-end infinite alternate;
+		white-space: nowrap;
+		overflow: hidden;
+		border-right: 3px solid;
+		font-family: monospace;
+		font-size: 2em;
 	}
 </style>
