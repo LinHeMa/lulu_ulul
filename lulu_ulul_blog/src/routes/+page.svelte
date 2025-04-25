@@ -33,12 +33,9 @@
 	<!-- Facebook Meta Tags -->
 	<meta property="og:url" content={siteUrl} />
 	<meta property="og:type" content="website" />
-	<meta property="og:title" content={siteName} />
+	<meta property="og:title" content='A personal tech blog powered by GitHub Issues and SvelteKit' />
 	<meta property="og:description" content={siteDescription} />
-	<meta
-		property="og:image"
-		content="https://opengraph.b-cdn.net/production/images/aeca2f27-6b97-4740-adfa-5ce68c084ece.jpg?token=Z-qE0mrv_Qy2gqwAzZEZpeXuKBtQkx7v_enUH6fzb3M&height=628&width=1200&expires=33281484990"
-	/>
+	<meta property="og:image" content="/images/og-default.jpg" />
 
 	<!-- Twitter Meta Tags -->
 	<meta name="twitter:card" content="summary_large_image" />
@@ -46,10 +43,7 @@
 	<meta property="twitter:url" content={siteUrl} />
 	<meta name="twitter:title" content="linhemade" />
 	<meta name="twitter:description" content="" />
-	<meta
-		name="twitter:image"
-		content="https://opengraph.b-cdn.net/production/images/aeca2f27-6b97-4740-adfa-5ce68c084ece.jpg?token=Z-qE0mrv_Qy2gqwAzZEZpeXuKBtQkx7v_enUH6fzb3M&height=628&width=1200&expires=33281484990"
-	/>
+	<meta name="twitter:image" content="/images/og-default.jpg" />
 
 	<!-- Meta Tags Generated via https://www.opengraph.xyz -->
 </svelte:head>
@@ -82,16 +76,16 @@
 							<div class="card-meta">
 								{formatDate(post.created_at)}
 							</div>
-							<p>
+							<p class="card-excerpt">
 								{getExcerpt(post.body, 150)}
 							</p>
 
 							{#if post.tags.length > 0}
 								<div class="tags mt-4">
 									{#each post.tags as tag}
-										<a href={`/tags/${tag}`} class="tag">
+										<span class="tag">
 											{tag}
-										</a>
+										</span>
 									{/each}
 								</div>
 							{/if}
@@ -102,7 +96,7 @@
 		</div>
 	{/if}
 </section>
-
+<!-- TODO: move to scss file -->
 <style>
 	.error {
 		color: #ef4444;
@@ -112,6 +106,7 @@
 		display: block;
 		color: inherit;
 		text-decoration: none;
+		height: 100%;
 	}
 
 	.tags {
