@@ -30,7 +30,7 @@
 	<meta property="og:description" content="LinHeMa de Blog" />
 	<meta
 		property="og:image"
-		content="https://opengraph.b-cdn.net/production/images/086d80af-2dd6-473d-a72b-15e53a6aa585.jpg?token=GrP98DBYZ3d0C7p7emkduCpJhgRuYjLBbvY_SDrMc6c&height=800&width=1200&expires=33281552649"
+		content="https://lulu-ulul.vercel.app/images/og-default.jpg"
 	/>
 
 	<!-- Twitter Meta Tags -->
@@ -41,7 +41,7 @@
 	<meta name="twitter:description" content="LinHeMa de Blog" />
 	<meta
 		name="twitter:image"
-		content="https://opengraph.b-cdn.net/production/images/086d80af-2dd6-473d-a72b-15e53a6aa585.jpg?token=GrP98DBYZ3d0C7p7emkduCpJhgRuYjLBbvY_SDrMc6c&height=800&width=1200&expires=33281552649"
+		content="https://lulu-ulul.vercel.app/images/og-default.jpg"
 	/>
 </svelte:head>
 
