@@ -13,11 +13,6 @@ export interface BlogPost {
   url: string;
 }
 
-// 使用我們的後端API安全地獲取博客文章
-// 這些函數將不再直接呼叫GitHub API，而是通過我們的後端路由
-// 如此就不會在前端暴露token了
-
-// 獲取所有已發佈的博客文章
 export async function getPublishedPosts(): Promise<BlogPost[]> {
   try {
     const response = await fetch('/api/posts');
@@ -34,7 +29,7 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
   }
 }
 
-// 通過issue編號獲取單個博客文章
+
 export async function getBlogPost(issueNumber: number): Promise<BlogPost | null> {
   try {
     const response = await fetch(`/api/posts?id=${issueNumber}`);

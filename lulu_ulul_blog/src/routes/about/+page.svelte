@@ -1,9 +1,8 @@
-
 <script lang="ts">
-import './_style/page.scss'
+	import './_style/page.scss';
 
-const thisYear = new Date().getFullYear()
-const myRealAge = thisYear - 1997
+	const thisYear = new Date().getFullYear();
+	const myRealAge = thisYear - 1997;
 </script>
 
 <svelte:head>
@@ -21,7 +20,7 @@ const myRealAge = thisYear - 1997
 			一覺到天亮，高機率把疲勞和壓力留到第二天。醫生說我大部分很正常。
 		</p>
 	</blockquote>
-	<ul>
+	<ul class="about-list">
 		<li>支持台灣獨立的工程師</li>
 		<li>有一隻最愛的狗</li>
 	</ul>
