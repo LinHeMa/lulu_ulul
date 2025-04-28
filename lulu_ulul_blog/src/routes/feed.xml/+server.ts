@@ -3,9 +3,10 @@ import { getExcerpt, parseMarkdown } from '$lib/markdown';
 
 export const prerender = true;
 
-export async function GET() {
+export async function GET({ url }) {
   // Site configuration
   const siteUrl = 'https://lulu-ulul.vercel.app';
+  const siteBaseUrl = url.origin; // 使用請求的原始URL
   const siteName = 'LinHeMa de Blog';
   const siteDescription = 'A personal tech blog powered by GitHub Issues and SvelteKit';
   const siteLanguage = 'en-us';
@@ -15,7 +16,7 @@ export async function GET() {
     // Fetch all published posts
     const posts = await getPublishedPosts();
     
-    // Start building the XML content
+    // 確保在返回XML前添加BOM標記和正確的XML宣告
     const xmlStart = `<?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" 
   xmlns:atom="http://www.w3.org/2005/Atom"
@@ -24,8 +25,8 @@ export async function GET() {
 <channel>
   <title>${siteName}</title>
   <description>${siteDescription}</description>
-  <link>${siteUrl}</link>
-  <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml"/>
+  <link>${siteBaseUrl}</link>
+  <atom:link href="${siteBaseUrl}/feed.xml" rel="self" type="application/rss+xml"/>
   <language>${siteLanguage}</language>
   <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
   <generator>SvelteKit</generator>`;
@@ -62,12 +63,17 @@ export async function GET() {
     // Return the XML with appropriate headers
     return new Response(fullXml, {
       headers: {
-        'Content-Type': 'application/xml',
+        'Content-Type': 'application/xml; charset=utf-8',
         'Cache-Control': 'max-age=0, s-maxage=3600'
       }
     });
   } catch (error) {
     console.error('Error generating RSS feed:', error);
-    return new Response('Error generating RSS feed', { status: 500 });
+    return new Response('Error generating RSS feed', { 
+      status: 500,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8'
+      }
+    });
   }
 } 
