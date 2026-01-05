@@ -1,10 +1,18 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { GITHUB_TOKEN } from '$env/static/private';
+import {
+  GITHUB_TOKEN,
+  GITHUB_OWNER as PRIVATE_GITHUB_OWNER,
+  GITHUB_REPO as PRIVATE_GITHUB_REPO
+} from '$env/static/private';
+import {
+  VITE_GITHUB_OWNER,
+  VITE_GITHUB_REPO
+} from '$env/static/public';
 
 // 後端安全環境變數（不會暴露到前端）
-const GITHUB_OWNER = process.env.GITHUB_OWNER || import.meta.env.VITE_GITHUB_OWNER;
-const GITHUB_REPO = process.env.GITHUB_REPO || import.meta.env.VITE_GITHUB_REPO;
+const GITHUB_OWNER = PRIVATE_GITHUB_OWNER || VITE_GITHUB_OWNER;
+const GITHUB_REPO = PRIVATE_GITHUB_REPO || VITE_GITHUB_REPO;
 
 // API base URL
 const API_BASE = 'https://api.github.com';
