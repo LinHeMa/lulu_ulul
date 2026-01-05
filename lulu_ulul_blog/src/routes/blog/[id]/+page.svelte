@@ -5,7 +5,7 @@
 	import { page } from '$app/stores';
 	import { getBlogPost } from '$lib/github';
 	import { parseMarkdown, formatDate } from '$lib/markdown';
-	import Giscus from '@giscus/svelte';
+	import Cusdis from '$lib/components/comments/Cusdis.svelte';
 	import type { BlogPost } from '$lib/github';
 	import './_styles/page.scss';
 	import Tag from '$lib/components/tag/Tag.svelte';
@@ -138,6 +138,8 @@
 	const siteName = 'LinHeMa de Blog';
 	const siteUrl = 'https://linhema.dev'; // Change to your actual domain
 	const articleId = $page.params.id;
+	const normalizedSiteUrl = siteUrl.replace(/\/$/, '');
+	const canonicalUrl = `${normalizedSiteUrl}/blog/${articleId}`;
 </script>
 
 <svelte:head>
@@ -229,19 +231,10 @@
 		<section class="mt-12">
 			<h2 class="text-2xl font-bold mb-6">Comments</h2>
 
-			<Giscus
-				id="comments"
-				repo="linhema/lulu_ulul"
-				repoId="R_kgDOLbYpXQ"
-				category="Announcements"
-				categoryId="DIC_kwDOLbYpXc4CUYS5"
-				mapping="pathname"
-				term="not-used-with-pathname"
-				reactionsEnabled="1"
-				emitMetadata="0"
-				inputPosition="top"
-				theme="light"
-				lang="en"
+			<Cusdis
+				pageId={`blog-${post.id}`}
+				pageUrl={canonicalUrl}
+				pageTitle={post.title}
 			/>
 		</section>
 	{/if}
