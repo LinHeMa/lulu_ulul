@@ -1,5 +1,7 @@
 import { browser } from '$app/environment';
 
+type FetchFunction = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+
 // Blog post type
 export interface BlogPost {
   id: number;
@@ -13,9 +15,10 @@ export interface BlogPost {
   url: string;
 }
 
-export async function getPublishedPosts(): Promise<BlogPost[]> {
+export async function getPublishedPosts(customFetch?: FetchFunction): Promise<BlogPost[]> {
+  const fetcher = customFetch ?? fetch;
   try {
-    const response = await fetch('/api/posts');
+    const response = await fetcher('/api/posts');
     
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
@@ -30,9 +33,10 @@ export async function getPublishedPosts(): Promise<BlogPost[]> {
 }
 
 
-export async function getBlogPost(issueNumber: number): Promise<BlogPost | null> {
+export async function getBlogPost(issueNumber: number, customFetch?: FetchFunction): Promise<BlogPost | null> {
+  const fetcher = customFetch ?? fetch;
   try {
-    const response = await fetch(`/api/posts?id=${issueNumber}`);
+    const response = await fetcher(`/api/posts?id=${issueNumber}`);
     
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
@@ -55,9 +59,10 @@ export async function getBlogPost(issueNumber: number): Promise<BlogPost | null>
 }
 
 // 按標籤獲取文章
-export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
+export async function getPostsByTag(tag: string, customFetch?: FetchFunction): Promise<BlogPost[]> {
+  const fetcher = customFetch ?? fetch;
   try {
-    const response = await fetch(`/api/posts?tag=${encodeURIComponent(tag)}`);
+    const response = await fetcher(`/api/posts?tag=${encodeURIComponent(tag)}`);
     
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`);
@@ -72,9 +77,9 @@ export async function getPostsByTag(tag: string): Promise<BlogPost[]> {
 }
 
 // 獲取所有已發佈文章的唯一標籤
-export async function getAllTags(): Promise<string[]> {
+export async function getAllTags(customFetch?: FetchFunction): Promise<string[]> {
   try {
-    const posts = await getPublishedPosts();
+    const posts = await getPublishedPosts(customFetch);
     const allTags = posts.flatMap(post => post.tags);
     return [...new Set(allTags)].sort();
   } catch (error) {

@@ -1,9 +1,7 @@
 import { getPublishedPosts } from '$lib/github';
 import { getExcerpt, parseMarkdown } from '$lib/markdown';
 
-export const prerender = true;
-
-export async function GET({ url }) {
+export async function GET({ url, fetch }) {
   // Site configuration
   const siteUrl = 'https://lulu-ulul.vercel.app';
   const siteBaseUrl = url.origin; // 使用請求的原始URL
@@ -14,7 +12,7 @@ export async function GET({ url }) {
 
   try {
     // Fetch all published posts
-    const posts = await getPublishedPosts();
+    const posts = await getPublishedPosts(fetch);
     
     // 確保在返回XML前添加BOM標記和正確的XML宣告
     const xmlStart = `<?xml version="1.0" encoding="UTF-8" ?>
