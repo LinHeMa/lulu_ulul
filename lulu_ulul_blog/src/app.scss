@@ -6,6 +6,7 @@
 }
 
 :root {
+  color-scheme: light;
   --primary-color: #3b82f6;
   --primary-color-hover: #2563eb;
   --text-color: #333;
@@ -20,20 +21,18 @@
     "Helvetica Neue", sans-serif;
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-color: #3b82f6;
-    --primary-color-hover: #60a5fa;
-    --text-color: #e5e7eb;
-    --text-light: #9ca3af;
-    --text-dark: #f3f4f6;
-    --bg-color: #111827;
-    --bg-dark: #030712;
-    --border-color: #374151;
-    --card-bg: #1f2937;
-    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --primary-color: #3b82f6;
+  --primary-color-hover: #60a5fa;
+  --text-color: #e5e7eb;
+  --text-light: #9ca3af;
+  --text-dark: #f3f4f6;
+  --bg-color: #111827;
+  --bg-dark: #030712;
+  --border-color: #374151;
+  --card-bg: #1f2937;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 body {
@@ -41,6 +40,9 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   line-height: 1.6;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
 }
 
 a {
@@ -90,7 +92,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     list-style: none;
-    background: #fff;
+    background: var(--card-bg);
     box-shadow: 0.3rem 0.5rem 0.5rem rgba(0, 0, 0, 0.3);
 
     li {

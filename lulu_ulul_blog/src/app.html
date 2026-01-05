@@ -1,9 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script>
+			(function () {
+				try {
+					var storageKey = 'theme-preference';
+					var stored = localStorage.getItem(storageKey);
+					var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+					var theme = stored === 'dark' || (!stored && prefersDark) ? 'dark' : 'light';
+					if (stored === 'light') {
+						theme = 'light';
+					}
+					document.documentElement.dataset.theme = theme;
+				} catch (error) {
+					document.documentElement.dataset.theme = 'light';
+				}
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { clickOutside } from '$lib/clickOutside';
+	import { currentTheme, destroyTheme, initTheme, toggleTheme } from '$lib/theme';
 	import '../app.scss';
 	import '../css/prism.css';
 
@@ -19,6 +21,13 @@
 	function closeMenu() {
 		isMenuOpen = false;
 	}
+
+	onMount(() => {
+		initTheme();
+		return () => {
+			destroyTheme();
+		};
+	});
 </script>
 
 <svelte:head>
@@ -40,7 +49,7 @@
 			</div>
 
 			<!-- Navigation -->
-			<nav>
+			<nav class="nav-controls">
 				<ul class="nav-list">
 					<li><a href="/" class="nav-link">Home</a></li>
 					<li><a href="/tags" class="nav-link">Tags</a></li>
@@ -51,28 +60,66 @@
 						</a>
 					</li>
 				</ul>
+				<button
+					class="theme-toggle"
+					type="button"
+					onclick={toggleTheme}
+					aria-label={$currentTheme === 'dark' ? '切換成淺色主題' : '切換成深色主題'}
+				>
+					<span class="theme-toggle__icon" aria-hidden="true">
+						{$currentTheme === 'dark' ? '🌙' : '☀️'}
+					</span>
+					<span class="theme-toggle__text">
+						{$currentTheme === 'dark' ? 'Dark' : 'Light'}
+					</span>
+				</button>
 				{#if isMenuOpen}
 					<div class="full-screen-cover"></div>
-					<ul class="nav-list-mobile" use:clickOutside on:click_outside={closeMenu}>
+					<ul class="nav-list-mobile" use:clickOutside={closeMenu}>
 						{#each navItems as item}
-							<li on:click={closeMenu}>
+							<li>
 								{#if item.title === navItemsEnum.RSS}
-									<a href={item.href} class="nav-link" title="RSS Feed">
+									<a
+										href={item.href}
+										class="nav-link"
+										title="RSS Feed"
+										onclick={closeMenu}
+									>
 										<span class="rss-icon">{item.title}</span>
 									</a>
 								{:else}
-									<a href={item.href} class="nav-link">{item.title}</a>
+									<a href={item.href} class="nav-link" onclick={closeMenu}>
+										{item.title}
+									</a>
 								{/if}
 							</li>
 						{/each}
+						<li class="mobile-toggle">
+							<button
+								class="theme-toggle theme-toggle--inline"
+								type="button"
+								onclick={toggleTheme}
+								aria-label={$currentTheme === 'dark' ? '切換成淺色主題' : '切換成深色主題'}
+							>
+								<span class="theme-toggle__icon" aria-hidden="true">
+									{$currentTheme === 'dark' ? '🌙' : '☀️'}
+								</span>
+								<span class="theme-toggle__text">
+									{$currentTheme === 'dark' ? 'Dark' : 'Light'}
+								</span>
+							</button>
+						</li>
 					</ul>
 				{/if}
-				<img
-					src="/icons/icon-menu.png"
-					alt="Menu"
-					class="menu-icon"
-					on:click={() => (isMenuOpen = !isMenuOpen)}
-				/>
+				<button
+					class="menu-button"
+					type="button"
+					aria-label={isMenuOpen ? '關閉選單' : '開啟選單'}
+					aria-expanded={isMenuOpen}
+					onclick={() => (isMenuOpen = !isMenuOpen)}
+				>
+					<img src="/icons/icon-menu.png" alt="" aria-hidden="true" class="menu-icon" />
+				</button>
 			</nav>
 		</div>
 	</header>
@@ -118,6 +165,12 @@
 		}
 	}
 
+	.nav-controls {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
 	.text-light {
 		color: var(--text-light);
 	}
@@ -156,11 +209,31 @@
 		font-size: 2em;
 	}
 
+	.menu-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0.25rem;
+		border: 1px solid transparent;
+		background: transparent;
+		border-radius: 0.5rem;
+		cursor: pointer;
+	}
+
+	.menu-button:focus-visible {
+		outline: 2px solid var(--primary-color);
+		outline-offset: 2px;
+	}
+
 	.menu-icon {
 		width: 1.5rem;
 		height: 1.5rem;
 		border-radius: 0;
-		@media screen and (min-width: 768px) {
+		display: block;
+	}
+
+	@media screen and (min-width: 768px) {
+		.menu-button {
 			display: none;
 		}
 	}
@@ -171,5 +244,57 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
+	}
+
+	.theme-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.4rem 0.75rem;
+		border-radius: 999px;
+		border: 1px solid var(--border-color);
+		background-color: var(--card-bg);
+		color: var(--text-color);
+		font-size: 0.85rem;
+		cursor: pointer;
+		transition: background-color 0.2s ease-in-out;
+	}
+
+	.theme-toggle:hover {
+		background-color: var(--border-color);
+	}
+
+	.theme-toggle__icon {
+		line-height: 1;
+		font-size: 1rem;
+	}
+
+	.theme-toggle__text {
+		font-weight: 600;
+	}
+
+	@media screen and (max-width: 768px) {
+		.theme-toggle {
+			padding: 0.35rem 0.6rem;
+			border-radius: 1rem;
+		}
+
+		.theme-toggle__text {
+			display: none;
+		}
+	}
+
+	.theme-toggle--inline {
+		width: 100%;
+		justify-content: flex-start;
+	}
+
+	.theme-toggle--inline .theme-toggle__text {
+		display: inline;
+	}
+
+	.mobile-toggle {
+		border-top: 1px solid var(--border-color);
+		padding-top: 0.5rem;
 	}
 </style>
