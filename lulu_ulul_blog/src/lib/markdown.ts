@@ -45,6 +45,33 @@ function highlightCode(code: string, lang: string): string {
   return JSON.stringify(code);
 }
 
+const enhanceImages = (html: string): string => {
+  const imageRegex = /<img([^>]*?)src="([^"]+)"([^>]*)>/gi;
+
+  return html.replace(imageRegex, (_match, beforeSrc = '', src: string, afterSrc = '') => {
+    const hasTrailingSlash = /\/\s*$/.test(afterSrc);
+    const cleanedBefore = beforeSrc.trim();
+    const cleanedAfter = afterSrc.replace(/\/\s*$/, '').trim();
+
+    const existingAttributes = [cleanedBefore, `src="${src}"`, cleanedAfter].filter(Boolean);
+    const attributeBlob = `${cleanedBefore} ${cleanedAfter}`.trim();
+    const hasLoading = /\sloading\s*=/.test(attributeBlob);
+    const hasDecoding = /\sdecoding\s*=/.test(attributeBlob);
+
+    const additions = [
+      'data-content-image="true"',
+      `data-img-key="${encodeURIComponent(src)}"`,
+      hasLoading ? '' : 'loading="lazy"',
+      hasDecoding ? '' : 'decoding="async"'
+    ].filter(Boolean);
+
+    const finalAttributes = [...existingAttributes, ...additions].join(' ').trim();
+    const closing = hasTrailingSlash ? ' />' : '>';
+
+    return finalAttributes ? `<img ${finalAttributes}${closing}` : `<img${closing}`;
+  });
+};
+
 // Parse markdown to HTML with syntax highlighting
 export function parseMarkdown(markdown: string): string {
   // First pass: Parse the markdown
@@ -55,12 +82,12 @@ export function parseMarkdown(markdown: string): string {
   }
   
   // Apply Prism classes to code blocks
-  return html
+  const highlighted = html
     .replace(/<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g, 
       (_match: string, lang: string, code: string) => {
         const decoded = code.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
-        const highlighted = highlightCode(decoded, lang);
-        return `<pre class="language-${lang}"><code class="language-${lang}">${highlighted}</code></pre>`;
+        const highlightedCode = highlightCode(decoded, lang);
+        return `<pre class="language-${lang}"><code class="language-${lang}">${highlightedCode}</code></pre>`;
       }
     )
     .replace(/<pre><code>([\s\S]*?)<\/code><\/pre>/g, 
@@ -69,6 +96,8 @@ export function parseMarkdown(markdown: string): string {
         return `<pre class="language-none"><code class="language-none">${decoded}</code></pre>`;
       }
     );
+
+  return enhanceImages(highlighted);
 }
 
 // Format a date string

@@ -1,7 +1,37 @@
-img {
+article {
+    width: 100%;
+}
+
+.blog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.blog-content img {
+    width: 100%;
     max-width: 100%;
-    max-height: 800px;
+    min-height: clamp(220px, 55vw, 500px);
+    max-height: min(85vh, 900px);
     border-radius: 1.5rem;
+    background: linear-gradient(120deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0));
+    border: 1px solid var(--border-color);
+    object-fit: cover;
+    aspect-ratio: var(--image-width, 4) / var(--image-height, 3);
+    transition:
+        opacity 0.3s ease-in-out,
+        box-shadow 0.2s ease-in-out;
+    opacity: 1;
+    position: relative;
+}
+
+.blog-content img[data-loaded='true'] {
+    opacity: 1;
+}
+
+.blog-content img[data-loaded='error'] {
+    opacity: 1;
+    object-fit: contain;
 }
 
 .article-date {

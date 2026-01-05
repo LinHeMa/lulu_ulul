@@ -1,6 +1,7 @@
 <!-- src/routes/blog/[id]/+page.svelte -->
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { getBlogPost } from '$lib/github';
 	import { parseMarkdown, formatDate } from '$lib/markdown';
@@ -8,18 +9,120 @@
 	import type { BlogPost } from '$lib/github';
 	import './_styles/page.scss';
 	import Tag from '$lib/components/tag/Tag.svelte';
+	type ImageDimensions = { width: number; height: number };
+	type ImageDimensionMap = Record<string, ImageDimensions>;
+	const IMAGE_CACHE_KEY = 'blog-image-dimensions';
+	const FALLBACK_IMAGE_DIMENSIONS: ImageDimensions = { width: 4, height: 3 };
+
 	let post: BlogPost | null = null;
 	let loading = true;
 	let error: string | null = null;
 	let htmlContent = '';
+	let contentRef: HTMLDivElement | null = null;
+	let imageDimensionCache: ImageDimensionMap = {};
+
+	const loadImageDimensionCache = (): ImageDimensionMap => {
+		if (!browser) return {};
+		try {
+			const cached = localStorage.getItem(IMAGE_CACHE_KEY);
+			return cached ? (JSON.parse(cached) as ImageDimensionMap) : {};
+		} catch (cacheError) {
+			console.warn('Unable to parse cached image dimensions.', cacheError);
+			return {};
+		}
+	};
+
+	const persistImageDimensionCache = () => {
+		if (!browser) return;
+		try {
+			localStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify(imageDimensionCache));
+		} catch (persistError) {
+			console.warn('Unable to store image dimensions.', persistError);
+		}
+	};
+
+	const applyImageDimensions = (img: HTMLImageElement, dims?: ImageDimensions) => {
+		const dimension = dims ?? FALLBACK_IMAGE_DIMENSIONS;
+		img.style.setProperty('--image-width', String(dimension.width));
+		img.style.setProperty('--image-height', String(dimension.height));
+		img.dataset.loaded = dims ? 'true' : 'false';
+	};
+
+	const decodeImageKey = (img: HTMLImageElement): string => {
+		const encoded = img.dataset.imgKey;
+		if (encoded) {
+			try {
+				return decodeURIComponent(encoded);
+			} catch {
+				return encoded;
+			}
+		}
+		return img.getAttribute('src') ?? '';
+	};
+
+	const captureImageDimensions = (img: HTMLImageElement) => {
+		if (!img.naturalWidth || !img.naturalHeight) return;
+		const key = decodeImageKey(img);
+		if (!key) return;
+		const dimensions = {
+			width: img.naturalWidth,
+			height: img.naturalHeight
+		};
+		imageDimensionCache[key] = dimensions;
+		applyImageDimensions(img, dimensions);
+		img.dataset.loaded = 'true';
+		persistImageDimensionCache();
+	};
+
+	const hydrateImageElement = (img: HTMLImageElement) => {
+		if (img.dataset.hydrated === 'true') {
+			return;
+		}
+
+		img.dataset.hydrated = 'true';
+		const key = decodeImageKey(img);
+		const cached = key ? imageDimensionCache[key] : undefined;
+		applyImageDimensions(img, cached);
+
+		if (img.complete) {
+			captureImageDimensions(img);
+		} else {
+			img.addEventListener(
+				'load',
+				() => {
+					captureImageDimensions(img);
+				},
+				{ once: true }
+			);
+			img.addEventListener(
+				'error',
+				() => {
+					img.dataset.loaded = 'error';
+				},
+				{ once: true }
+			);
+		}
+	};
+
+	const hydrateImages = async () => {
+		await tick();
+		if (!contentRef) return;
+		const images = contentRef.querySelectorAll<HTMLImageElement>('img[data-content-image="true"]');
+		images.forEach(hydrateImageElement);
+	};
 
 	onMount(async () => {
+		if (browser) {
+			imageDimensionCache = loadImageDimensionCache();
+		}
+
 		try {
 			const id = parseInt($page.params.id);
 			post = await getBlogPost(id);
 
 			if (post) {
 				htmlContent = parseMarkdown(post.body);
+				await hydrateImages();
 			} else {
 				error = 'Post not found';
 			}
@@ -98,7 +201,7 @@
 				{/if}
 			</header>
 
-			<div class="blog-content">
+			<div class="blog-content" bind:this={contentRef}>
 				{@html htmlContent}
 			</div>
 
