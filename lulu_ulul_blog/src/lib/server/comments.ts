@@ -1,4 +1,4 @@
-import { getSupabaseClient } from './supabase';
+import { getSupabaseAdminClient, getSupabasePublicClient } from './supabase';
 import type { CommentRecord, CreateCommentInput } from '$lib/comments/types';
 
 const TABLE_NAME = 'comments';
@@ -8,7 +8,7 @@ const sanitize = (value: string): string => value.replace(/\s+/g, ' ').trim();
 const selectFields = 'id, post_id, author_name, author_email, content, status, created_at';
 
 export const fetchCommentsForPost = async (postId: number): Promise<CommentRecord[]> => {
-	const supabase = getSupabaseClient();
+	const supabase = getSupabasePublicClient();
 	const { data, error } = await supabase
 		.from(TABLE_NAME)
 		.select(selectFields)
@@ -27,7 +27,7 @@ export const fetchCommentsForPost = async (postId: number): Promise<CommentRecor
 export const createComment = async (
 	input: CreateCommentInput
 ): Promise<{ comment: CommentRecord; requiresApproval: boolean }> => {
-	const supabase = getSupabaseClient();
+	const supabase = getSupabaseAdminClient();
 
 	const payload = {
 		post_id: input.postId,

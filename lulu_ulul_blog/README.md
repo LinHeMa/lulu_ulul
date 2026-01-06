@@ -33,16 +33,19 @@ pnpm preview        # 於本機預覽 build 結果
 
 ```
 SUPABASE_URL=https://xxx.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=xxxx
+SUPABASE_SECRET_KEY=sb_secret_xxx          # 只給後端 / Vercel Serverless 使用
+PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_pub_xxx # 給前端/SSR 讀取受 RLS 限制的資料
 ```
 
-   本地開發亦可使用 `VITE_SUPABASE_URL`、`VITE_SUPABASE_SERVICE_ROLE_KEY`。
+   若需要相容現有 `.env`，也可用 `VITE_SUPABASE_URL`、`VITE_SUPABASE_SECRET_KEY`、`VITE_SUPABASE_PUBLISHABLE_KEY`。
 
 3. 前端會向 `/api/comments` 取得/送出留言：
    - `GET /api/comments?postId=<issue number>`：讀取已核准留言
    - `POST /api/comments`：body 需包含 `postId`, `authorName`, `content`，email 選填
 
 送出後若為待審核狀態，UI 會提示讀者稍候；你可以在 Supabase 後台修改 `status = 'approved'` 讓留言顯示在前端。
+
+> 若啟用 Row Level Security，記得建立 policy 允許 `anon/publishable` 角色 `SELECT` `status = 'approved'` 的留言；新增/審核仍透過 `SUPABASE_SECRET_KEY` 執行，不會暴露在瀏覽器。
 
 ## 文章來源
 
