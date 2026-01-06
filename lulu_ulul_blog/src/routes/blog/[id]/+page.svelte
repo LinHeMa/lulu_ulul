@@ -5,7 +5,7 @@
 	import { page } from '$app/stores';
 	import { getBlogPost } from '$lib/github';
 	import { parseMarkdown, formatDate } from '$lib/markdown';
-	import Cusdis from '$lib/components/comments/Cusdis.svelte';
+	import CommentSection from '$lib/components/comments/CommentSection.svelte';
 	import type { BlogPost } from '$lib/github';
 	import './_styles/page.scss';
 	import Tag from '$lib/components/tag/Tag.svelte';
@@ -135,11 +135,7 @@
 	});
 
 	// Site metadata
-	const siteName = 'LinHeMa de Blog';
-	const siteUrl = 'https://linhema.dev'; // Change to your actual domain
 	const articleId = $page.params.id;
-	const normalizedSiteUrl = siteUrl.replace(/\/$/, '');
-	const canonicalUrl = `${normalizedSiteUrl}/blog/${articleId}`;
 </script>
 
 <svelte:head>
@@ -231,11 +227,7 @@
 		<section class="mt-12">
 			<h2 class="text-2xl font-bold mb-6">Comments</h2>
 
-			<Cusdis
-				pageId={`blog-${post.id}`}
-				pageUrl={canonicalUrl}
-				pageTitle={post.title}
-			/>
+			<CommentSection postId={post.number} postTitle={post.title} />
 		</section>
 	{/if}
 </div>

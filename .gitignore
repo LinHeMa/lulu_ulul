@@ -36,3 +36,4 @@ build
 .netlify
 .vercel
 .svelte-kit 
+AGENTS.md
